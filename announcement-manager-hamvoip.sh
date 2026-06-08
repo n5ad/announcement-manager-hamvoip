@@ -69,11 +69,7 @@ mkdir -p "$ANNOUNCE_DIR"
 chown -R http:http "$ANNOUNCE_DIR"
 chmod -R 2775 "$ANNOUNCE_DIR"
 
-# Prerequisite scripts (create if missing)
-echo_step "9. Installing Asterisk helper scripts"
-mkdir -p "$LOCAL_DIR"
 
-# (All the cat blocks for playaudio.sh, playglobal.sh, polite_*.sh, audio_convert.sh go here - same as previous full versions)
 # STEP 9. Install prerequisite scripts in /etc/asterisk/local/ (if missing)
 echo_step "9. Installing prerequisite scripts in $LOCAL_DIR"
 mkdir -p "$LOCAL_DIR"
@@ -97,7 +93,7 @@ if [ -z "\$1" ]; then
     echo "Usage: \$0 <audio_file_without_extension>"
     exit 1
 fi
-/usr/sbin/asterisk -rx "rpt playback \${NODE} \$1"
+asterisk -rx "rpt playback \${NODE} \$1"
 EOF
     chmod +x "$GLOBAL_SCRIPT"
     chown asterisk:asterisk "$GLOBAL_SCRIPT" 2>/dev/null || chown root:root "$GLOBAL_SCRIPT"
@@ -144,7 +140,7 @@ while true; do
     fi
 done
 
-/usr/sbin/asterisk -rx "rpt playback \${NODE} \$FILE"
+asterisk -rx "rpt playback \${NODE} \$FILE"
 EOF
     chmod +x "$POLITE_GLOBAL_SCRIPT"
     chown asterisk:asterisk "$POLITE_GLOBAL_SCRIPT" 2>/dev/null || chown root:root "$POLITE_GLOBAL_SCRIPT"
@@ -173,7 +169,7 @@ if [ -z "\$1" ]; then
     echo "Usage: \$0 <audio_file_without_extension>"
     exit 1
 fi
-/usr/sbin/asterisk -rx "rpt localplay \${NODE} \$1"
+asterisk -rx "rpt localplay \${NODE} \$1"
 EOF
     chmod +x "$PLAY_SCRIPT"
     chown asterisk:asterisk "$PLAY_SCRIPT" 2>/dev/null || chown root:root "$PLAY_SCRIPT"
@@ -220,7 +216,7 @@ while true; do
     fi
 done
 
-/usr/sbin/asterisk -rx "rpt localplay \${NODE} \$FILE"
+asterisk -rx "rpt localplay \${NODE} \$FILE"
 EOF
     chmod +x "$POLITE_PLAY_SCRIPT"
     chown asterisk:asterisk "$POLITE_PLAY_SCRIPT" 2>/dev/null || chown root:root "$POLITE_PLAY_SCRIPT"
