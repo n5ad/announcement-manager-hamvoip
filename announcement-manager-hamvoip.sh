@@ -40,9 +40,16 @@ echo_step "3. Cloning HamvoIP repo"
 rm -rf "$TEMP_CLONE"
 git clone --depth 1 "$REPO_URL" "$TEMP_CLONE" || error "Git clone failed"
 
-echo_step "4. Copying files to Supermon custom"
+echo_step "3. Cloning HamvoIP repo"
+rm -rf "$TEMP_CLONE"
+git clone --depth 1 "$REPO_URL" "$TEMP_CLONE" || error "Git clone failed"
+
+echo_step "4. Copying only .php and .inc files from repo"
 mkdir -p "$TARGET_DIR"
-cp -v "$TEMP_CLONE"/* "$TARGET_DIR"/ 2>/dev/null || warn "Some files missing"
+find "$TEMP_CLONE" -maxdepth 1 -type f \( -name "*.php" -o -name "*.inc" \) -exec cp -v {} "$TARGET_DIR"/ \;
+
+echo "Copied the following files:"
+ls -1 "$TARGET_DIR"/*.php "$TARGET_DIR"/*.inc 2>/dev/null || echo "No files copied"
 
 # MP3 directory
 echo_step "5. Creating /mp3 directory"
