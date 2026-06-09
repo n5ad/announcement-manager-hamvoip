@@ -1,7 +1,16 @@
 <?php
 /**
- * announcement.php - HamvoIP Version
- * modified from Announcement Manager for ASL3 created by James N5AD June 2026
+ * announcement.php
+ *
+ * HamvoIP Supermon Announcement Manager
+ *
+ * Author: N5AD (James Carnathan)
+ *
+ * Created: June 2026
+ * Updated: June 2026
+ *
+ *
+ * Note: This file is included after successful login.
  */
 
 $TMP_DIR = '/mp3';
