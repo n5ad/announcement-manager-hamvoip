@@ -1,3 +1,6 @@
+// update_announcement.php
+// Modified from Announcement Manager for ASL3 created by James N5AD June 2026
+
 <?php
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405); echo "Method not allowed."; exit;
