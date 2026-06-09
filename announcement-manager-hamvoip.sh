@@ -78,10 +78,19 @@ chmod 755 "$LOCAL_DIR"
 # playglobal.sh
 cat > "$LOCAL_DIR/playglobal.sh" << EOF
 #!/bin/bash
+# modified for Hamvoip by N5AD James
+# playglobal.sh  Play an audio file over an Hamvoip
 NODE="$NODE_NUMBER"
-if [ "\$EUID" -ne 0 ]; then echo "Run with sudo"; exit 1; fi
-if [ -z "\$1" ]; then echo "Usage: \$0 <file>"; exit 1; fi
-asterisk -rx "rpt playback \${NODE} \$1"
+if [ "$EUID" -ne 0 ]; then
+    echo "This script must be run with sudo or as root."
+    exit 1
+fi
+if [ -z "$1" ]; then
+    echo "Usage: $0 <audio_file_without_extension>"
+    exit 1
+fi
+asterisk -rx "rpt playback ${NODE} $1"
+
 EOF
 chmod +x "$LOCAL_DIR/playglobal.sh"
 chown asterisk:asterisk "$LOCAL_DIR/playglobal.sh" 2>/dev/null || true
@@ -89,28 +98,40 @@ chown asterisk:asterisk "$LOCAL_DIR/playglobal.sh" 2>/dev/null || true
 # polite_global.sh
 cat > "$LOCAL_DIR/polite_global.sh" << 'EOF'
 #!/bin/bash
+
 FILE=$1
 NODE="$NODE_NUMBER"
+
 MAX_WAIT=300
 CHECK_INTERVAL=1
 TAIL_DELAY=2
+
 is_busy() {
     RESULT=$(asterisk -rx "rpt show variables $NODE" 2>/dev/null | grep "RPT_RXKEYED" | awk -F= '{print $2}' | tr -d ' ')
     [ "$RESULT" = "1" ]
 }
+
 WAITED=0
+
 while true; do
     if is_busy; then
         sleep $CHECK_INTERVAL
         WAITED=$((WAITED + CHECK_INTERVAL))
-        [ "$WAITED" -ge "$MAX_WAIT" ] && break
+
+        if [ "$WAITED" -ge "$MAX_WAIT" ]; then
+            break
+        fi
     else
         sleep $TAIL_DELAY
-        is_busy && continue
+        if is_busy; then
+            continue
+        fi
         break
     fi
 done
+
 asterisk -rx "rpt playback ${NODE} $FILE"
+
 EOF
 chmod +x "$LOCAL_DIR/polite_global.sh"
 chown asterisk:asterisk "$LOCAL_DIR/polite_global.sh" 2>/dev/null || true
@@ -118,10 +139,19 @@ chown asterisk:asterisk "$LOCAL_DIR/polite_global.sh" 2>/dev/null || true
 # playaudio.sh
 cat > "$LOCAL_DIR/playaudio.sh" << EOF
 #!/bin/bash
+# Modified for Hamvoip by N5AD James
+# playaudio.sh  Play an audio file over Hamvoip
 NODE="$NODE_NUMBER"
-if [ "\$EUID" -ne 0 ]; then echo "Run with sudo"; exit 1; fi
-if [ -z "\$1" ]; then echo "Usage: \$0 <file>"; exit 1; fi
-asterisk -rx "rpt localplay \${NODE} \$1"
+if [ "$EUID" -ne 0 ]; then
+    echo "This script must be run with sudo or as root."
+    exit 1
+fi
+if [ -z "$1" ]; then
+    echo "Usage: $0 <audio_file_without_extension>"
+    exit 1
+fi
+asterisk -rx "rpt localplay ${NODE} $1"
+
 EOF
 chmod +x "$LOCAL_DIR/playaudio.sh"
 chown asterisk:asterisk "$LOCAL_DIR/playaudio.sh" 2>/dev/null || true
@@ -134,23 +164,33 @@ NODE="$NODE_NUMBER"
 MAX_WAIT=300
 CHECK_INTERVAL=1
 TAIL_DELAY=2
+
 is_busy() {
     RESULT=$(asterisk -rx "rpt show variables $NODE" 2>/dev/null | grep "RPT_RXKEYED" | awk -F= '{print $2}' | tr -d ' ')
     [ "$RESULT" = "1" ]
 }
+
 WAITED=0
+
 while true; do
     if is_busy; then
         sleep $CHECK_INTERVAL
         WAITED=$((WAITED + CHECK_INTERVAL))
-        [ "$WAITED" -ge "$MAX_WAIT" ] && break
+
+        if [ "$WAITED" -ge "$MAX_WAIT" ]; then
+            break
+        fi
     else
         sleep $TAIL_DELAY
-        is_busy && continue
+        if is_busy; then
+            continue
+        fi
         break
     fi
 done
+
 asterisk -rx "rpt localplay ${NODE} $FILE"
+
 EOF
 chmod +x "$LOCAL_DIR/polite_play.sh"
 chown asterisk:asterisk "$LOCAL_DIR/polite_play.sh" 2>/dev/null || true
