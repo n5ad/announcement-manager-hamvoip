@@ -223,7 +223,7 @@ else
     echo "Backup created: $BACKUP_FILE"
 
     # Check if announcement include is already present
-    if grep -q "include_once.*custom/announcement.inc" "$LINK_PHP"; then
+    if grep -q "include_once.*/custom/announcement.inc" "$LINK_PHP"; then
         echo "Announcement include already present in link.php — skipping patch"
     else
         echo "Patching link.php to include Announcement Manager..."
@@ -240,7 +240,7 @@ else
 <div id="spinny">
 </div>
 <?php
-include_once "custom/announcement.inc";
+include_once "/srv/http/supermon/custom/announcement.inc";
 echo "<br><br>";
 include_once "footer.inc";
 ?>
