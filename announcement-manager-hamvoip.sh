@@ -22,7 +22,7 @@ check_root() { [[ $EUID -eq 0 ]] || error "Run as root (sudo)."; }
 
 check_root
 echo_step "1. Installing required packages"
-pacman -Sy --noconfirm git sox perl || error "pacman failed"
+pacman -Sy --noconfirm git sox libmad libid3tag perl || error "pacman failed"
 
 echo ""
 echo "=== HamvoIP Supermon Announcement Manager Setup ==="
