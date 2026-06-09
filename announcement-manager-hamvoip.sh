@@ -2,7 +2,7 @@
 #
 # setup-supermon-announcements-hamvoip.sh
 # COMPLETE HamvoIP Supermon Installer
-# No Allmon references - Uses announcement.inc
+# Modified from Announcement Manager created for ASL3 by James N5AD June 2026
 
 set -euo pipefail
 
