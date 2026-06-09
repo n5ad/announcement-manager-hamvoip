@@ -1,3 +1,7 @@
+// delete_announcement.php for Hamvoip
+// Modifie from Announcement Manager for ASL3 created by James N5AD June 2026
+
+
 <?php
 if (!isset($_POST['raw_line'])) {
     echo "Missing cron line";
