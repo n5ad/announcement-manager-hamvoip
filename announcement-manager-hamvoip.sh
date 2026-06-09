@@ -210,12 +210,24 @@ EOF
 chmod +x "$LOCAL_DIR/audio_convert.sh"
 chown asterisk:asterisk "$LOCAL_DIR/audio_convert.sh" 2>/dev/null || true
 
-# link.php patch for Supermon
-echo_step "9. Patching link.php"
+echo_step "9. Patching link.php for Announcement Manager"
+
 if [[ -f "$LINK_PHP" ]]; then
     cp "$LINK_PHP" "${LINK_PHP}.bak.$(date +%Y%m%d-%H%M%S)"
-    if ! grep -q "announcement.inc" "$LINK_PHP"; then
+    echo "Backup created: ${LINK_PHP}.bak.*"
+
+    if grep -q "announcement.inc" "$LINK_PHP"; then
+        echo "Announcement include already present - skipping patch"
+    else
+        echo "Applying clean patch..."
+
+        # Remove any existing footer include at the end
         sed -i '/include.*footer.inc/d' "$LINK_PHP"
+
+        # Remove any trailing ?> if it exists
+        sed -i '${/^\s*?>\s*$/d}' "$LINK_PHP"
+
+        # Append our include cleanly
         cat << 'EOF' >> "$LINK_PHP"
 
 <div id="spinny"></div>
@@ -225,10 +237,14 @@ echo "<br><br>";
 include_once "footer.inc";
 ?>
 EOF
+
         echo "link.php patched successfully"
     fi
+
     chown http:http "$LINK_PHP"
     chmod 644 "$LINK_PHP"
+else
+    warn "link.php not found at $LINK_PHP"
 fi
 
 # Sudoers
