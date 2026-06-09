@@ -1,8 +1,18 @@
-// delete_announcement.php for Hamvoip
-// Modifie from Announcement Manager for ASL3 created by James N5AD June 2026
-
 
 <?php
+/**
+ * delete_announcement.php
+ *
+ * HamvoIP Supermon Announcement Manager
+ *
+ * Author: N5AD (James Carnathan)
+ *
+ * Created: June 2026
+ * Updated: June 2026
+ *
+ *
+ * Note: This file is included after successful login.
+ */
 if (!isset($_POST['raw_line'])) {
     echo "Missing cron line";
     exit;
