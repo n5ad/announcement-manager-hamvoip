@@ -1,3 +1,8 @@
+// delete_file.php for Hamvoip
+// Modified from Announcement Manager for ASL3 created by James N5AD June 2026
+
+
+
 <?php
 // delete_file.php - HamvoIP version
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
