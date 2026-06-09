@@ -1,7 +1,18 @@
-// upload_mp3.php for Hamvoip
-// Modified from Announcement Manager for ASL3 created by James N5AD June 2026
 
 <?php
+/**
+ * upload_mp3.php
+ *
+ * HamvoIP Supermon Announcement Manager
+ *
+ * Author: N5AD (James Carnathan)
+ *
+ * Created: June 2026
+ * Updated: June 2026
+ *
+ *
+ * Note: This file is included after successful login.
+ */
 if (!isset($_FILES['file'])) {
     echo "No file uploaded.";
     exit;
