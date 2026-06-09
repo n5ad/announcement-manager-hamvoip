@@ -1,3 +1,7 @@
+// globalplay.php for Hamvoip
+// Modified from Announcement Manager for ASL3 created by James N5AD June 2026
+
+
 <?php
 // globalplay.php - Fixed for HamvoIP (full path)
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
