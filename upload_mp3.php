@@ -1,3 +1,6 @@
+// upload_mp3.php for Hamvoip
+// Modified from Announcement Manager for ASL3 created by James N5AD June 2026
+
 <?php
 if (!isset($_FILES['file'])) {
     echo "No file uploaded.";
