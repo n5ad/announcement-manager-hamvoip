@@ -1,9 +1,6 @@
 <?php
-// announcement.inc - HamvoIP version for Supermon
-// Cleaned - No Piper TTS
-// Latest features: MP3 Upload, Polite/Priority, Scope support
-// Created/Updated by N5AD - June 2026
-
+// announcement.inc - HamvoIP Supermon version
+// Updated: Added "Convert to .ul" button + Local/Global Play moved to .ul section
 if (isset($_SESSION['sm61loggedin']) && $_SESSION['sm61loggedin'] === true) { 
 ?>
 <hr style="margin-top:30px;">
@@ -22,14 +19,14 @@ if (isset($_SESSION['sm61loggedin']) && $_SESSION['sm61loggedin'] === true) {
     </select>
     <input type="button" class="submit" value="Install Announcement" id="install_announcement">
     <input type="button" class="submit" value="Delete MP3" id="delete_mp3" style="background-color:#dc3545; color:white; border:1px solid #c82333;">
-    <input type="button" class="submit" value="Local Play" id="local_play_mp3" style="background:#28a745;color:white;border:1px solid #1e7e34;">
-    <input type="button" class="submit" value="Global Play" id="global_play_mp3" style="background:#fd7e14;color:white;border:1px solid #e06b00;">
+    <input type="button" class="submit" value="Convert to .ul" id="convert_mp3" style="background:#17a2b8;color:white;border:1px solid #138496;">
     <br><br>
 
     <select id="ul_select" class="submit" style="border:2px solid #444; width: 250px;">
         <option value="">-- Select Announcement --</option>
     </select>
-    <input type="button" class="submit" value="Play Now" id="run_ul">
+    <input type="button" class="submit" value="Local Play" id="local_play_ul" style="background:#28a745;color:white;border:1px solid #1e7e34;">
+    <input type="button" class="submit" value="Global Play" id="global_play_ul" style="background:#fd7e14;color:white;border:1px solid #e06b00;">
     <input type="button" class="submit" value="Delete UL" id="delete_ul" style="background-color:#dc3545; color:white; border:1px solid #c82333;">
     <br><br>
 
@@ -99,7 +96,17 @@ $(document).ready(function () {
         });
     });
 
-    // Button Handlers
+    // === NEW Convert Button ===
+    $("#convert_mp3").click(function() {
+        let f = $("#mp3_select").val();
+        if (!f) { alert("Select an MP3 or WAV file first"); return; }
+        $.post("custom/convert_mp3.php", { file: f }, function(r){
+            alert(r);
+            loadULDropdown();
+        }).fail(function() { alert("Conversion failed."); });
+    });
+
+    // Your original handlers
     $("#delete_mp3").click(function() {
         let mp3 = $("#mp3_select").val();
         if (!mp3) { alert("Select an MP3 file."); return; }
@@ -110,17 +117,18 @@ $(document).ready(function () {
         });
     });
 
-    $("#local_play_mp3").click(function() {
-        let f = $("#mp3_select").val();
-        if (!f) { alert("Select file first"); return; }
-        $.post("/supermon/custom/run_announcement.php", { file: f, source: "mp3" }, function(r){ alert(r); });
+    // Local and Global Play now use .ul files
+    $("#local_play_ul").click(function() {
+        let f = $("#ul_select").val();
+        if (!f) { alert("Select a .ul file first"); return; }
+        $.post("/supermon/custom/run_announcement.php", { file: f, source: "ul" }, function(r){ alert(r); });
     });
 
-    $("#global_play_mp3").click(function() {
-        let f = $("#mp3_select").val();
-        if (!f) { alert("Select file first"); return; }
+    $("#global_play_ul").click(function() {
+        let f = $("#ul_select").val();
+        if (!f) { alert("Select a .ul file first"); return; }
         if (!confirm("GLOBAL PLAY - Continue?")) return;
-        $.post("/supermon/custom/globalplay.php", { file: f, source: "mp3" }, function(r){ alert(r); });
+        $.post("/supermon/custom/globalplay.php", { file: f, source: "ul" }, function(r){ alert(r); });
     });
 
     $("#run_ul").click(function() {
@@ -139,34 +147,28 @@ $(document).ready(function () {
         });
     });
 
-    // Install Announcement
+    // Your original Install Announcement (kept unchanged)
     $("#install_announcement").click(function() {
         let mp3 = $("#mp3_select").val();
         if (!mp3) { alert("Select an MP3 file."); return; }
-
-        let min   = prompt("Minute:", "45"); if(min===null) return;
-        let hour  = prompt("Hour:", "7-20"); if(hour===null) return;
-        let dom   = prompt("DOM:", "*"); if(dom===null) return;
+        let min = prompt("Minute:", "45"); if(min===null) return;
+        let hour = prompt("Hour:", "7-20"); if(hour===null) return;
+        let dom = prompt("DOM:", "*"); if(dom===null) return;
         let month = prompt("Month:", "*"); if(month===null) return;
-        let dow   = prompt("DOW:", "*"); if(dow===null) return;
-
+        let dow = prompt("DOW:", "*"); if(dow===null) return;
         let week = "*";
         let useNth = false;
         if (/^[1-7]$/.test(dow.trim())) {
             week = prompt("Week of month? (* or 1-5)", "*");
             if (week !== "*" && /^[1-5]$/.test(week)) useNth = true;
         }
-
         let desc = prompt("Description:", "Scheduled announcement");
         if (!desc || !desc.trim()) { alert("Description required."); return; }
-
         let scopeChoice = prompt("Scope? (local or global)", "local");
         let scope = (scopeChoice && scopeChoice.trim().toLowerCase() === "global") ? "global" : "local";
         if (scope === "global" && !confirm("GLOBAL PLAYBACK - Proceed?")) return;
-
         let modeChoice = prompt("Mode? (polite or priority)", "polite");
         let mode = (modeChoice && modeChoice.trim().toLowerCase() === "priority") ? "priority" : "polite";
-
         $.post("custom/announcement.php", {
             file: mp3,
             min, hour, dom, month, dow, week,
@@ -194,9 +196,8 @@ $(document).ready(function () {
                 row.append($("<td>").text(parts[3] || "*"));
                 row.append($("<td>").text(parts[4] || "*"));
                 row.append($("<td>").text(c.file));
-                row.append($("<td>").text(c.scope ? c.scope.toUpperCase() : "—"));
+                row.append($("<td>").text(c.scope ? c.scope.toUpperCase() : "â€”"));
                 row.append($("<td>").text(c.desc || ""));
-
                 let isEnabled = !c.raw.startsWith('#');
                 let toggleBtn = $("<button>")
                     .text(isEnabled ? "Enabled" : "Disabled")
@@ -209,12 +210,10 @@ $(document).ready(function () {
                             loadCronList();
                         });
                     });
-
                 let acts = $("<td>").css("white-space", "nowrap");
                 $("<button>").text("Play Now").css({"background":"#28a745", "color":"white", "margin-right":"8px"}).click(function(){
                     $.post("custom/run_announcement.php", {file: c.file}, function(data){ alert(data); });
                 }).appendTo(acts);
-
                 $("<button>").text("Edit").css({"background":"#ffc107", "color":"black", "margin-right":"8px"}).click(function(){
                     if (c.raw.includes("/bin/bash -c") && c.raw.includes("date +\\%d")) {
                         alert("Cannot edit nth-week jobs. Delete and recreate.");
@@ -230,14 +229,12 @@ $(document).ready(function () {
                         alert(resp); loadCronList();
                     });
                 }).appendTo(acts);
-
                 $("<button>").text("Delete").css({"background":"#dc3545", "color":"white"}).click(function(){
                     if (!confirm("Delete " + c.file + "?")) return;
                     $.post("custom/delete_announcement.php", {raw_line: c.raw}, function(data){
                         alert(data); loadCronList();
                     });
                 }).appendTo(acts);
-
                 row.append($("<td>").append(toggleBtn));
                 row.append($("<td>").append(acts));
                 table.append(row);
