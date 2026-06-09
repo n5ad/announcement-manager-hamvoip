@@ -1,8 +1,18 @@
-// list_ul.php for Hamvoip
-// Modified from Announcement Manager for ASL3 created by James N5AD June 2026
 
 <?php
-/** list_ul.php - HamvoIP version */
+/**
+ * list_ul.php
+ *
+ * HamvoIP Supermon Announcement Manager
+ *
+ * Author: N5AD (James Carnathan)
+ *
+ * Created: June 2026
+ * Updated: June 2026
+ *
+ *
+ * Note: This file is included after successful login.
+ */
 $SOUNDS_DIR = '/usr/local/share/asterisk/sounds/announcements';
 $files = glob("$SOUNDS_DIR/*.ul");
 $out = [];
