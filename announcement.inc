@@ -1,7 +1,20 @@
 <?php
-// announcement.inc - HamvoIP Supermon version
-// created by N5AD James
-// converted from original announcement manager for asl3 June 2026
+/**
+ * announcement.inc
+ *
+ * HamvoIP Supermon Announcement Manager
+ *
+ * Author: N5AD (James Carnathan)
+ *
+ * Created: June 2026
+ * Updated: June 2026
+ *
+ * Description:
+ *   Main interface for the Announcement Manager on HamvoIP.
+ *   Supports MP3 upload, conversion to .ul, scheduling, and playback.
+ *
+ * Note: This file is included after successful login.
+ */
 if (isset($_SESSION['sm61loggedin']) && $_SESSION['sm61loggedin'] === true) { 
 ?>
 <hr style="margin-top:30px;">
