@@ -267,4 +267,23 @@ $(document).ready(function () {
     loadCronList();
 });
 </script>
+<style>
+    .submit { padding:6px 12px; margin:4px; }
+    
+    /* Center all data in the cron table */
+    #cron_table th, #cron_table td {
+        border: 1px solid #666;
+        padding: 8px;
+        text-align: center !important;
+        vertical-align: middle;
+    }
+    
+    #cron_table tbody tr:nth-child(even) { 
+        background-color: #f9f9f9; 
+    }
+    
+    #cron_table tbody tr:hover { 
+        background-color: #f0f8ff; 
+    }
+</style>
 <?php } ?>
