@@ -1,3 +1,6 @@
+// list_cron.php for Hamvoip
+// Modified from Announcement Manager for ASL3 created by James N5AD June 2026
+
 <?php
 header('Content-Type: application/json');
 $cron = shell_exec('sudo crontab -l 2>/dev/null');
