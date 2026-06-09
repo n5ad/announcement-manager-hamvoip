@@ -1,14 +1,16 @@
 <?php
 /**
  * announcement.php - HamvoIP Version
- * MP3 to .ul conversion + cron install with scope + mode
+ * modified from Announcement Manager for ASL3 created by James N5AD June 2026
  */
+
 $TMP_DIR = '/mp3';
 $CONVERT_SCRIPT = '/etc/asterisk/local/audio_convert.sh';
 $PLAY_SCRIPT_LOCAL  = '/etc/asterisk/local/playaudio.sh';
 $PLAY_SCRIPT_GLOBAL = '/etc/asterisk/local/playglobal.sh';
 $SOUNDS_DIR = '/usr/local/share/asterisk/sounds/announcements';
 
+// Get POST data
 $mp3     = basename($_POST['file'] ?? '');
 $min     = $_POST['min'] ?? '';
 $hour    = $_POST['hour'] ?? '';
@@ -19,25 +21,29 @@ $week    = $_POST['week'] ?? '*';
 $use_nth = !empty($_POST['use_nth']) && $_POST['use_nth'] == 1;
 $desc    = $_POST['desc'] ?? '';
 $scope   = $_POST['scope'] ?? 'local';
-$mode    = $_POST['mode'] ?? 'polite';   // polite or priority
+$mode    = $_POST['mode'] ?? 'polite';
 
 if (!$mp3) die("No MP3 file specified.");
 
 $src_mp3 = "$TMP_DIR/$mp3";
-if (!file_exists($src_mp3)) die("MP3 file not found.");
+if (!file_exists($src_mp3)) die("MP3 file not found: $mp3");
 
-if (!is_executable($CONVERT_SCRIPT)) die("Conversion script missing.");
-
-exec(escapeshellcmd("$CONVERT_SCRIPT $src_mp3"), $out, $ret);
-if ($ret !== 0) die("Conversion failed.");
+if (!is_executable($CONVERT_SCRIPT)) die("audio_convert.sh not found or not executable.");
 
 $base_name = pathinfo($mp3, PATHINFO_FILENAME);
-$ul_file = "$TMP_DIR/$base_name.ul";
-if (!file_exists($ul_file)) die("Conversion failed - no .ul created.");
+$ul_final  = "$SOUNDS_DIR/$base_name.ul";
 
-exec(escapeshellcmd("sudo cp $ul_file $SOUNDS_DIR/$base_name.ul"));
-exec(escapeshellcmd("sudo chmod 644 $SOUNDS_DIR/$base_name.ul"));
-exec(escapeshellcmd("sudo chown root:root $SOUNDS_DIR/$base_name.ul"));
+// Run conversion directly to final location
+$cmd = escapeshellcmd("sudo $CONVERT_SCRIPT " . escapeshellarg($src_mp3) . " " . escapeshellarg($ul_final));
+exec($cmd, $output, $ret);
+
+if ($ret !== 0) {
+    die("Conversion failed: " . implode("\n", $output));
+}
+
+// Set permissions
+exec("sudo chown root:root " . escapeshellarg($ul_final));
+exec("sudo chmod 644 " . escapeshellarg($ul_final));
 
 $play_script = ($scope === 'global') ? $PLAY_SCRIPT_GLOBAL : $PLAY_SCRIPT_LOCAL;
 
@@ -57,16 +63,19 @@ if ($min !== '' && $hour !== '' && $dom !== '' && $month !== '' && $dow !== '') 
         $cron_line = "$min $hour $dom $month $dow $play_script $play_target";
     }
 
-    $tmp_cron = tempnam(sys_get_temp_dir(), 'cron');
+    $tmp_cron = tempnam(sys_get_temp_dir(), 'cron_ann');
     exec("sudo crontab -l > " . escapeshellarg($tmp_cron) . " 2>/dev/null");
+
     file_put_contents($tmp_cron, $desc_clean . "\n", FILE_APPEND);
     file_put_contents($tmp_cron, $cron_line . "\n", FILE_APPEND);
+
     exec("sudo crontab " . escapeshellarg($tmp_cron));
     unlink($tmp_cron);
 
-    echo "Success! Cron installed.\nScope: $scope | Mode: $mode";
+    echo "Success! Announcement installed.\nScope: $scope | Mode: $mode";
 } else {
-    echo "Conversion successful. No cron installed.";
+    echo "Conversion successful. No cron job created.";
 }
-echo "\nUL file: $SOUNDS_DIR/$base_name.ul";
+
+echo "\nUL file: $ul_final";
 ?>
