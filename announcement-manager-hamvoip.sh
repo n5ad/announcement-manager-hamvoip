@@ -212,25 +212,33 @@ chown asterisk:asterisk "$LOCAL_DIR/audio_convert.sh" 2>/dev/null || true
 
 echo_step "9. Patching link.php for Announcement Manager"
 
-if [[ -f "$LINK_PHP" ]]; then
-    cp "$LINK_PHP" "${LINK_PHP}.bak.$(date +%Y%m%d-%H%M%S)"
-    echo "Backup created: ${LINK_PHP}.bak.*"
+LINK_PHP="/srv/http/supermon/link.php"
+BACKUP_FILE="${LINK_PHP}.bak.$(date +%Y%m%d-%H%M%S)"
 
-    if grep -q "announcement.inc" "$LINK_PHP"; then
-        echo "Announcement include already present - skipping patch"
+if [ ! -f "$LINK_PHP" ]; then
+    echo "  → link.php not found at $LINK_PHP → skipping patch"
+else
+    # Create timestamped backup (multiple backups possible)
+    cp -v "$LINK_PHP" "$BACKUP_FILE"
+    echo "Backup created: $BACKUP_FILE"
+
+    # Check if announcement include is already present
+    if grep -q "include_once.*custom/announcement.inc" "$LINK_PHP"; then
+        echo "Announcement include already present in link.php — skipping patch"
     else
-        echo "Applying clean patch..."
-
-        # Remove any existing footer include at the end
+        echo "Patching link.php to include Announcement Manager..."
+        
+        # Remove any existing include "footer.inc" lines at the very end
         sed -i '/include.*footer.inc/d' "$LINK_PHP"
-
-        # Remove any trailing ?> if it exists
-        sed -i '${/^\s*?>\s*$/d}' "$LINK_PHP"
-
-        # Append our include cleanly
+        
+        # Remove any trailing ?> if present (we'll add it back if needed)
+        sed -i '${/^\s*?>$/d}' "$LINK_PHP"
+        
+        # Append our desired ending block
         cat << 'EOF' >> "$LINK_PHP"
 
-<div id="spinny"></div>
+<div id="spinny">
+</div>
 <?php
 include_once "custom/announcement.inc";
 echo "<br><br>";
