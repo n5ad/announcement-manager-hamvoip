@@ -1,8 +1,18 @@
-// list_mp3.php for Hamvoip
-// Modified from Announcement Manager for ASL3 created by James N5AD June 2026
 
 <?php
-/** list_mp3.php - HamvoIP version */
+/**
+ * list_mp3.php
+ *
+ * HamvoIP Supermon Announcement Manager
+ *
+ * Author: N5AD (James Carnathan)
+ *
+ * Created: June 2026
+ * Updated: June 2026
+ *
+ *
+ * Note: This file is included after successful login.
+ */
 $files = [];
 $mp3_files = glob("/mp3/*.mp3");
 foreach ($mp3_files as $f) $files[] = basename($f);
