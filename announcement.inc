@@ -7,11 +7,7 @@
  * Author: N5AD (James Carnathan)
  *
  * Created: June 2026
- * Updated: June 2026
- *
- * Description:
- *   Main interface for the Announcement Manager on HamvoIP.
- *   Supports MP3 upload, conversion to .ul, scheduling, and playback.
+ * 
  *
  * Note: This file is included after successful login.
  */
