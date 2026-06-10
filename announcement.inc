@@ -153,7 +153,7 @@ $(document).ready(function () {
         });
     });
 
-    // Install Announcement (my original working code)
+    // Install Announcement 
     $("#install_announcement").click(function() {
         let mp3 = $("#mp3_select").val();
         if (!mp3) { alert("Select an MP3 file."); return; }
@@ -226,7 +226,7 @@ $(document).ready(function () {
 
                 let acts = $("<td>").css("white-space", "nowrap");
 
-                // FIXED: Play Now respects scope
+                
                 let playBtn = $("<button>").text("Play Now")
                     .css({"background":"#28a745", "color":"white", "margin-right":"8px"})
                     .click(function(){
