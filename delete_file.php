@@ -8,7 +8,6 @@
  * Author: N5AD (James Carnathan)
  *
  * Created: June 2026
- * Updated: June 2026
  *
  *
  * Note: This file is included after successful login.
