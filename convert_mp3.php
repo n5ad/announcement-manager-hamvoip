@@ -44,8 +44,8 @@ $cmd = escapeshellcmd("sudo $convert_script " . escapeshellarg($input) . " " . e
 exec($cmd . " 2>&1", $output, $retval);
 
 if ($retval === 0 || file_exists($ul_final)) {
-    echo "âœ… Successfully converted and installed: $base_name.ul";
+    echo "Successfully converted and installed: $base_name.ul";
 } else {
-    echo "âŒ Conversion command failed.\n" . implode("\n", $output);
+    echo " Conversion command failed.\n" . implode("\n", $output);
 }
 ?>
