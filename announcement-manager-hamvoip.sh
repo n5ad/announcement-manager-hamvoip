@@ -24,7 +24,7 @@ echo "=== HamvoIP Announcement Manager Setup ==="
 echo "Repo: $REPO_URL"
 echo -n "Continue? (y/N) "
 read -r answer
-[ "$answer" =~ ^[Yy]$ ]] || { echo "Aborted."; exit 0; }
+[[ "$answer" =~ ^[Yy]$ ]] || { echo "Aborted."; exit 0; }
 echo_step "2. Node number"
 echo -n "Node number: "
 read -r NODE_NUMBER
