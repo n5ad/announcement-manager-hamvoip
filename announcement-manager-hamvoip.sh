@@ -265,7 +265,7 @@ if [[ -f "$LINK_PHP" ]]; then
     if ! grep -q "allmon-announcement.inc" "$LINK_PHP"; then
         sed -i '/include.*footer.inc/d' "$LINK_PHP"
         cat << 'EOF' >> "$LINK_PHP"
-<?php include "custom/allmon-announcement.inc"; ?>
+<?php include "custom/announcement.inc"; ?>
 <?php include_once "footer.inc"; ?>
 EOF
     fi
