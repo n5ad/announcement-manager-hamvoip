@@ -262,7 +262,7 @@ echo "Verified: Both scripts are executable."
 echo_step "10. Patching link.php"
 if [[ -f "$LINK_PHP" ]]; then
     cp "$LINK_PHP" "${LINK_PHP}.bak.$(date +%Y%m%d-%H%M%S)"
-    if ! grep -q "allmon-announcement.inc" "$LINK_PHP"; then
+    if ! grep -q "announcement.inc" "$LINK_PHP"; then
         sed -i '/include.*footer.inc/d' "$LINK_PHP"
         cat << 'EOF' >> "$LINK_PHP"
 <?php include "custom/announcement.inc"; ?>
