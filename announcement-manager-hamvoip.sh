@@ -28,7 +28,9 @@ read -r answer
 echo_step "2. Node number"
 echo -n "Node number: "
 read -r NODE_NUMBER
-[[ "$  NODE_NUMBER" =~ ^[0-9]+  $ ]] || error "Invalid node number"
+if [[ ! "$NODE_NUMBER" =~ ^[0-9]+$ ]]; then
+    error "Invalid node number"
+fi
 echo_step "3. Cloning HamvoIP repo"
 rm -rf "$TEMP_CLONE"
 git clone --depth 1 "$REPO_URL" "$TEMP_CLONE" || error "Git clone failed"
