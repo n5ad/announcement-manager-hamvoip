@@ -267,7 +267,7 @@ else
     cp -v "$FOOTER_INC" "$BACKUP_FOOTER"
     echo "Backup of footer.inc created: $BACKUP_FOOTER"
 
-    if grep -q 'include_once.*/custom/announcement\.inc' "$FOOTER_INC"; then
+    if grep -q 'include_once.*custom/announcement\.inc' "$FOOTER_INC"; then
         echo "Announcement include already present — →skipping"
     else
         echo "Patching footer.inc..."
@@ -282,8 +282,8 @@ else
         # When we find the closing ?> while inside the block, insert after it
         inblock && /^\s*\?>\s*$/ {
             print
-y
-inblock = 0
+            print "<?php include_once \"custom/announcement.inc\"; ?> <br><br>"
+            inblock = 0
             next
         }
         { print }
@@ -291,10 +291,6 @@ inblock = 0
 
         echo "footer.inc patched correctly (include added after ?>)."
     fi
-
-    chown www-data:www-data "$FOOTER_INC" 2>/dev/null || true
-    chmod 644 "$FOOTER_INC" 2>/dev/null || true
-fi
 
 
 # Sudoers
